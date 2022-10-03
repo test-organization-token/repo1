@@ -10,9 +10,12 @@ jobs:
       # They are cloned under $GITHUB_WORKSPACE
       - name: Check out repo1
         uses: actions/checkout@v2
+        
+      - name: Check read me 
+        run: echo $GITHUB_WORKSPACE/repo1/README
 
       - name: Check out repo2
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.REPO01_TOKEN }}
+          token: ${{ secrets.CHECKOUT_REPOS }}
           repository: test-organization-token/repo2
