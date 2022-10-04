@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v2
         
       - name: Check read me repo1
-        run: cat $GITHUB_WORKSPACE/repo1/README
+        run: ls $GITHUB_WORKSPACE
 
       - name: Check out repo2
         uses: actions/checkout@v2
