@@ -39,7 +39,11 @@ jobs:
         run: ls $GITHUB_WORKSPACE
         
       - name: Check where we are
-        run: pwd && ls
+        run: |
+          pwd 
+          ls
+          cd repo1
+          git status
         
       - name: Publish real to Github Container Registry
         uses: elgohr/Publish-Docker-Github-Action@main
