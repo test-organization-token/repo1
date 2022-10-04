@@ -25,3 +25,14 @@ jobs:
           
       - name: Check read me repo2
         run: cat $GITHUB_WORKSPACE/repo2/README
+        
+      - name: Publish real to Github Container Registry
+        uses: elgohr/Publish-Docker-Github-Action@v4
+        with:
+          name: test-image
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          dockerfile: docker_files/Dockerfile 
+          tag_names: true # we use tags/release by their git name (main branch pused as latest)
+          tag_semver: true # we remove the prefix "v" from the git tag
