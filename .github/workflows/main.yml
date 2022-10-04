@@ -12,9 +12,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: repo1
-        
-      - name: Check read me repo1
-        run: ls $GITHUB_WORKSPACE
 
       - name: Check out repo2
         uses: actions/checkout@v2
@@ -22,9 +19,12 @@ jobs:
           token: ${{ secrets.CHECKOUT_REPOS }}
           repository: test-organization-token/repo2
           path: repo2
-          
-      - name: Check read me repo2
-        run: cat $GITHUB_WORKSPACE/repo2/README
+        
+      - name: Check workspace
+        run: ls $GITHUB_WORKSPACE
+        
+      - name: Check where we are
+        run: pwd
         
       - name: Publish real to Github Container Registry
         uses: elgohr/Publish-Docker-Github-Action@v4
