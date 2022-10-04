@@ -9,7 +9,7 @@ on:
         required: true
         options:
         - 'main'
-        - $GITHUB_REF_NAME
+        - '$GITHUB_REF_NAME'
         default: true
 
 jobs:
