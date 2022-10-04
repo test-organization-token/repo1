@@ -21,13 +21,10 @@ jobs:
   build-and-push:
     runs-on: ubuntu-22.04
     steps:
-    
       - name: Get tag
         id: tag
-        uses: little-core-labs/get-git-tag@v3.0.1
-        with:
-          tagRegex: "foobar-(.*)"  # Optional. Returns specified group text as tag name. Full tag string is returned if regex is not defined.
-      
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+         
       # We checkout all the repos required to build the Dockerfile 
       # They are cloned under $GITHUB_WORKSPACE
       # $GITHUB_WORKSPACE = /home/runner/work/repo1/repo1
