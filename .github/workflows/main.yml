@@ -1,6 +1,16 @@
 name: Test cross repos
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      tag:
+        type: choice
+        description: 'Add tag latest/tag-name to the docker image'
+        required: true
+        options:
+        - 'main'
+        - $GITHUB_REF_NAME
+        default: true
 
 jobs:
   build-and-push:
@@ -15,13 +25,15 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: repo1
+          ref: ${{ inputs.tag }}
 
       - name: Check out repo2
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.CHECKOUT_REPOS }}
           repository: test-organization-token/repo2
-          path: repo2
+          path: repo2          
+          ref: ${{ inputs.tag }}
         
       - name: Check workspace
         run: ls $GITHUB_WORKSPACE
