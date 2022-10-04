@@ -32,7 +32,7 @@ jobs:
       - name: Publish real to Github Container Registry
         uses: elgohr/Publish-Docker-Github-Action@main
         with:
-          name: test-image
+          name: test-organization-token/test-image
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
