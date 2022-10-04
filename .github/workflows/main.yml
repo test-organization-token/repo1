@@ -9,7 +9,7 @@ on:
         required: true
         options:
         - 'main'
-        - '$GITHUB_REF_NAME'
+        - 'v1.0.0'
         default: true
 
 jobs:
