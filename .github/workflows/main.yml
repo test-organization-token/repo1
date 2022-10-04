@@ -34,6 +34,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
           dockerfile: docker_files/Dockerfile 
-          workdir: $GITHUB_WORKSPACE
+          workdir: "$GITHUB_WORKSPACE"
           tag_names: true # we use tags/release by their git name (main branch pused as latest)
           tag_semver: true # we remove the prefix "v" from the git tag
