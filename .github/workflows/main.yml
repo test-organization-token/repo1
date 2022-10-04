@@ -2,20 +2,30 @@ name: Test cross repos
 
 on: 
   workflow_dispatch:
-    inputs:
-      tag:
-        type: choice
-        description: 'Add tag latest/tag-name to the docker image'
-        required: true
-        options:
-        - 'main'
-        - 'v1.0.0'
-        default: true
+  push:
+    tags:
+    - '*'
+    
+#   workflow_dispatch:
+#     inputs:
+#       tag:
+#         type: choice
+#         description: 'Add tag latest/tag-name to the docker image'
+#         required: true
+#         options:
+#         - 'main'
+#         - 'v1.0.0'
+#         default: true
 
 jobs:
   build-and-push:
     runs-on: ubuntu-22.04
     steps:
+    
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1
+      
       # We checkout all the repos required to build the Dockerfile 
       # They are cloned under $GITHUB_WORKSPACE
       # $GITHUB_WORKSPACE = /home/runner/work/repo1/repo1
@@ -25,7 +35,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: repo1
-          ref: ${{ inputs.tag }}
+          ref: ${{steps.tag.outputs.tag}}
 
       - name: Check out repo2
         uses: actions/checkout@v2
@@ -33,7 +43,7 @@ jobs:
           token: ${{ secrets.CHECKOUT_REPOS }}
           repository: test-organization-token/repo2
           path: repo2          
-          ref: ${{ inputs.tag }}
+          ref: ${{steps.tag.outputs.tag}}
         
       - name: Check workspace
         run: ls $GITHUB_WORKSPACE
@@ -54,6 +64,5 @@ jobs:
           registry: ghcr.io
           dockerfile: repo1/dockerfiles/Dockerfile 
           workdir: /home/runner/work/repo1/repo1
-          tags: "latest,${{ inputs.tag }}"
           tag_names: true # we use tags/release by their git name (main branch pused as latest)
           tag_semver: true # we remove the prefix "v" from the git tag
