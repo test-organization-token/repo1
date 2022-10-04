@@ -10,6 +10,8 @@ jobs:
       # They are cloned under $GITHUB_WORKSPACE
       - name: Check out repo1
         uses: actions/checkout@v2
+        with:
+          path: repo1
         
       - name: Check read me repo1
         run: ls $GITHUB_WORKSPACE
