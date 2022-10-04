@@ -24,7 +24,7 @@ jobs:
     
       - name: Get tag
         id: tag
-        uses: dawidd6/action-get-tag@v1
+        uses: little-core-labs/get-git-tag@v3.0.1
       
       # We checkout all the repos required to build the Dockerfile 
       # They are cloned under $GITHUB_WORKSPACE
