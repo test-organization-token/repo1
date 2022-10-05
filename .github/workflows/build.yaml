@@ -53,6 +53,7 @@ jobs:
           registry: ghcr.io
           dockerfile: repo1/dockerfiles/Dockerfile 
           workdir: /home/runner/work/repo1/repo1
+          cache: false
           tags: dev
                  
       - name: Publish real to Github Container Registry
@@ -65,6 +66,7 @@ jobs:
           registry: ghcr.io
           dockerfile: repo1/dockerfiles/Dockerfile 
           workdir: /home/runner/work/repo1/repo1
+          cache: false
           tags: latest
           
   build-and-push-tag:
