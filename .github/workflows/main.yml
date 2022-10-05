@@ -24,9 +24,12 @@ jobs:
   build-and-push:
     runs-on: ubuntu-22.04
     steps:
-      - name: Get tag
+      #- name: Get tag
+      #  id: tag
+      #  run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+        
+      - uses: little-core-labs/get-git-tag@v3.0.1
         id: tag
-        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
         
       - name: Print tag
         run: echo ${{steps.tag.outputs.tag}}
