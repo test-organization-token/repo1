@@ -148,4 +148,4 @@ jobs:
           registry: ghcr.io
           dockerfile: repo1/dockerfiles/Dockerfile 
           workdir: /home/runner/work/repo1/repo1
-          tag: ${{steps.pr.outputs.docker_tag}}
+          tags: ${{steps.pr.outputs.docker_tag}}
