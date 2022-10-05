@@ -40,7 +40,7 @@ jobs:
         with:
           token: ${{ secrets.CHECKOUT_REPOS }}
           repository: test-organization-token/repo2
-          path: repo
+          path: repo2
           ref:  ${{ inputs.tag-repo2 }}
             
       - name: Publish real to Github Container Registry
