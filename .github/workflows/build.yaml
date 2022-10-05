@@ -50,10 +50,10 @@ jobs:
         run: |
           if [[ "${{github.event.inputs.tag-repo1}}" != "main" ]]
           then 
-           ::set-output name=docker_tag::${{github.event.inputs.tag-repo1}}
+           echo "::set-output name=docker_tag::${{github.event.inputs.tag-repo1}}"
           elif [[ "${{github.event.inputs.tag-repo2}}" != "main" ]]
           then
-           ::set-output name=docker_tag::${{github.event.inputs.tag-repo2}}
+           3cho "::set-output name=docker_tag::${{github.event.inputs.tag-repo2}}"
           fi            
             
       - name: Publish real to Github Container Registry
