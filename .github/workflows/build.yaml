@@ -46,15 +46,18 @@ jobs:
       
       - name: Check docker tag
         if: github.event_name != 'schedule' && github.event.inputs.tag-repo1 != 'main' || github.event.inputs.tag-repo2 != 'main' 
-        id: tag-dev
+        id: tag
         run: |
+          docker_tag="latest"
           if [[ "${{github.event.inputs.tag-repo1}}" != "main" ]]
           then 
-           echo "::set-output name=docker_tag::${{github.event.inputs.tag-repo1}}"
+           docker_tag=${{github.event.inputs.tag-repo1}} | cut -d "/" -f 2
+           #echo "::set-output name=docker_tag::${{github.event.inputs.tag-repo1}} | cut -d "/" -f 2" 
           elif [[ "${{github.event.inputs.tag-repo2}}" != "main" ]]
           then
-           echo "::set-output name=docker_tag::${{github.event.inputs.tag-repo2}}"
-          fi      
+           docker_tag=${{github.event.inputs.tag-repo2}} | cut -d "/" -f 2
+          fi
+          echo "::set-output name=docker_tag::$docker_tag"
       
       - name: Print docker tag
         run: echo ${{steps.tag-dev.outputs.docker_tag}}
