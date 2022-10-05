@@ -33,7 +33,14 @@ jobs:
         
       - name: Print tag
         run: echo ${{steps.tag.outputs.tag}}
-         
+        
+      - name: Get PR number
+        id: PR_number
+        run: |
+          PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
+          echo $PR_NUMBER
+          echo ::set-output name=PR_number::$PR_NUMBER
+          
       # We checkout all the repos required to build the Dockerfile 
       # They are cloned under $GITHUB_WORKSPACE
       # $GITHUB_WORKSPACE = /home/runner/work/repo1/repo1
