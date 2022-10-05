@@ -7,6 +7,8 @@ on:
     - '*'
   pull_request:
     types: ['ready_for_review']
+  repository_dispatch:
+    types: [build_repo2]
 
     
 #   workflow_dispatch:
@@ -149,3 +151,37 @@ jobs:
           dockerfile: repo1/dockerfiles/Dockerfile 
           workdir: /home/runner/work/repo1/repo1
           tags: ${{steps.pr.outputs.docker_tag}}
+          
+  build-and-push-pr-repo2:
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'repository_dispatch'
+    steps:                     
+              
+      # We checkout all the repos required to build the Dockerfile 
+      # They are cloned under $GITHUB_WORKSPACE
+      # $GITHUB_WORKSPACE = /home/runner/work/repo1/repo1
+      # repo1 = /home/runner/work/repo1/repo1/repo1
+      # repo2 = /home/runner/work/repo1/repo1/repo2
+      - name: Check out repo1
+        uses: actions/checkout@v2
+        with:
+          path: repo1
+
+      - name: Check out repo2
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.CHECKOUT_REPOS }}
+          repository: test-organization-token/repo2
+          path: repo2          
+          ref: ${{ github.event.client_payload.branch }}
+                
+      - name: Publish real to Github Container Registry
+        uses: elgohr/Publish-Docker-Github-Action@main
+        with:
+          name: test-organization-token/test-image
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          dockerfile: repo1/dockerfiles/Dockerfile 
+          workdir: /home/runner/work/repo1/repo1
+          tags: ${{ github.event.client_payload.pr_number }}
