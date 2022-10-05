@@ -27,6 +27,9 @@ jobs:
       - name: Get tag
         id: tag
         run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+        
+      - name: Print tag
+        run: echo ${{steps.tag.outputs.tag}}
          
       # We checkout all the repos required to build the Dockerfile 
       # They are cloned under $GITHUB_WORKSPACE
