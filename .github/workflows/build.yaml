@@ -6,12 +6,7 @@ on:
        tag-repo2:
          type: string
          description: 'Branch for repo2 (default: main)'
-         required: true
-         default: main
-       tag-repo3:
-         type: string
-         description: 'Branch for repo3 (default: main)'
-         required: true
+         required: false
          default: main
 
    push:
