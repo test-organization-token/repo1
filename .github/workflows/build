@@ -1,0 +1,46 @@
+name: Test cross repos
+
+on:    
+   workflow_dispatch:
+     inputs:
+       tag-repo2:
+         type: string
+         description: 'Branch to use for building (main is default)'
+         required: true
+         default: main
+
+jobs:
+  build-and-push-latest:
+    runs-on: ubuntu-22.04
+    steps:
+          
+      # We checkout all the repos required to build the Dockerfile 
+      # They are cloned under $GITHUB_WORKSPACE
+      # $GITHUB_WORKSPACE = /home/runner/work/repo1/repo1
+      # repo1 = /home/runner/work/repo1/repo1/repo1
+      # repo2 = /home/runner/work/repo1/repo1/repo2
+      - name: Check out repo1
+        uses: actions/checkout@v2
+        with:
+          path: repo1
+
+      - name: Check out repo2
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.CHECKOUT_REPOS }}
+          repository: test-organization-token/repo2
+          path: repo
+          ref:  ${{ inputs.tag-repo2 }}
+            
+      - name: Publish real to Github Container Registry
+        uses: elgohr/Publish-Docker-Github-Action@main
+        with:
+          name: test-organization-token/test-image
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          dockerfile: repo1/dockerfiles/Dockerfile 
+          workdir: /home/runner/work/repo1/repo1
+          tags: dev
+          #tag_names: true # we use tags/release by their git name (main branch pused as latest)
+          #tag_semver: true # we remove the prefix "v" from the git tag      
