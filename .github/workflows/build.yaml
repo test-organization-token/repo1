@@ -13,7 +13,8 @@ on:
          description: 'Branch for repo2 (default: main)'
          required: false
          default: main
-
+   schedule:
+     - cron: '20 14 * * *'
    push:
      tags:
      - '*'
@@ -21,7 +22,7 @@ on:
 jobs:
   build-and-push-dev:    
     runs-on: ubuntu-22.04
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
     steps:
           
       # We checkout all the repos required to build the Dockerfile 
@@ -45,7 +46,7 @@ jobs:
             
       - name: Publish real to Github Container Registry
         uses: elgohr/Publish-Docker-Github-Action@main
-        if: github.event.inputs.tag-repo1 != 'main' || github.event.inputs.tag-repo2 != 'main' 
+        if: github.event_name != 'schedule' && github.event.inputs.tag-repo1 != 'main' || github.event.inputs.tag-repo2 != 'main' 
         with:
           name: test-organization-token/test-image
           username: ${{ github.actor }}
