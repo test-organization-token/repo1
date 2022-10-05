@@ -43,6 +43,18 @@ jobs:
           repository: test-organization-token/repo2
           path: repo2
           ref:  ${{ inputs.tag-repo2 }}
+      
+      - name: Check docker tag
+        if: github.event_name != 'schedule' && github.event.inputs.tag-repo1 != 'main' || github.event.inputs.tag-repo2 != 'main' 
+        id: tag-dev
+        run: |
+          if [[ "${{github.event.inputs.tag-repo1}}" != "main" ]]
+          then 
+           ::set-output name=docker_tag::${{github.event.inputs.tag-repo1}}
+          elif [[ "${{github.event.inputs.tag-repo2}}" != "main" ]]
+          then
+           ::set-output name=docker_tag::${{github.event.inputs.tag-repo2}}
+          fi            
             
       - name: Publish real to Github Container Registry
         uses: elgohr/Publish-Docker-Github-Action@main
@@ -55,7 +67,7 @@ jobs:
           dockerfile: repo1/dockerfiles/Dockerfile 
           workdir: /home/runner/work/repo1/repo1
           cache: false
-          tags: dev
+          tags: dev-${{ steps.tag-dev.docker_tag }}
                  
       - name: Publish real to Github Container Registry
         uses: elgohr/Publish-Docker-Github-Action@main
