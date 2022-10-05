@@ -51,11 +51,13 @@ jobs:
           docker_tag="latest"
           if [[ "${{github.event.inputs.tag-repo1}}" != "main" ]]
           then 
-           docker_tag=${{github.event.inputs.tag-repo1}} | cut -d "/" -f 2
+           docker_tag=${{github.event.inputs.tag-repo1}}
+           docker_tag=(echo $docker_tag | cut -d "/" -f 2)
            #echo "::set-output name=docker_tag::${{github.event.inputs.tag-repo1}} | cut -d "/" -f 2" 
           elif [[ "${{github.event.inputs.tag-repo2}}" != "main" ]]
           then
-           docker_tag=${{github.event.inputs.tag-repo2}} | cut -d "/" -f 2
+           docker_tag=${{github.event.inputs.tag-repo2}}
+           docker_tag=(echo $docker_tag | cut -d "/" -f 2)
           fi
           echo "::set-output name=docker_tag::$docker_tag"
       
