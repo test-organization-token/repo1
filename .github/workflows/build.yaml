@@ -52,7 +52,9 @@ jobs:
           if [[ "${{github.event.inputs.tag-repo1}}" != "main" ]]
           then 
            docker_tag="${{github.event.inputs.tag-repo1}}"
+           echo "$docker_tag"
            docker_tag=(echo "$docker_tag" | tr '/' '_')
+           echo "$docker_tag"
           elif [[ "${{github.event.inputs.tag-repo2}}" != "main" ]]
           then
            docker_tag="${{github.event.inputs.tag-repo2}}"
