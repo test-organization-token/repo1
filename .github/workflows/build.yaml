@@ -53,12 +53,12 @@ jobs:
           then 
            docker_tag="${{github.event.inputs.tag-repo1}}"
            echo "$docker_tag"
-           docker_tag=(echo "$docker_tag" | tr '/' '_')
+           docker_tag=$(echo "$docker_tag" | tr '/' '_')
            echo "$docker_tag"
           elif [[ "${{github.event.inputs.tag-repo2}}" != "main" ]]
           then
            docker_tag="${{github.event.inputs.tag-repo2}}"
-           docker_tag=(echo "$docker_tag" | tr '/' '_')
+           docker_tag=$(echo "$docker_tag" | tr '/' '_')
           fi
           echo "::set-output name=docker_tag::$docker_tag"
       
