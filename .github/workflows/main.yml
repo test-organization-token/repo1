@@ -21,27 +21,55 @@ on:
 #         default: true
 
 jobs:
-  build-and-push:
+  build-and-push-latest:
     runs-on: ubuntu-22.04
+    if: github.event_name == 'workflow_dispatch'
     steps:
-      #- name: Get tag
-      #  id: tag
-      #  run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
-        
+          
+      # We checkout all the repos required to build the Dockerfile 
+      # They are cloned under $GITHUB_WORKSPACE
+      # $GITHUB_WORKSPACE = /home/runner/work/repo1/repo1
+      # repo1 = /home/runner/work/repo1/repo1/repo1
+      # repo2 = /home/runner/work/repo1/repo1/repo2
+      - name: Check out repo1
+        uses: actions/checkout@v2
+        with:
+          path: repo1
+
+      - name: Check out repo2
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.CHECKOUT_REPOS }}
+          repository: test-organization-token/repo2
+          path: repo2          
+            
+      - name: Publish real to Github Container Registry
+        uses: elgohr/Publish-Docker-Github-Action@main
+        if: github.event_name == 'workflow_dispatch'
+        with:
+          name: test-organization-token/test-image
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          dockerfile: repo1/dockerfiles/Dockerfile 
+          workdir: /home/runner/work/repo1/repo1
+          #tag_names: true # we use tags/release by their git name (main branch pused as latest)
+          #tag_semver: true # we remove the prefix "v" from the git tag      
+
+  build-and-push-tag:
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'push'
+    steps:       
       - uses: little-core-labs/get-git-tag@v3.0.1
         id: tag
-        
-      - name: Print tag
-        if: github.event_name == 'push'
-        run: echo ${{steps.tag.outputs.tag}}
-        
-      - name: Get PR number
-        id: PR_number
-        if: github.event_name == 'pull_request'
-        run: |
-          PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
-          echo $PR_NUMBER
-          echo ::set-output name=PR_number::$PR_NUMBER
+               
+#       - name: Set image tag from PR number
+#         id: pr
+#         if: github.event_name == 'pull_request'
+#         run: |
+#           PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
+#           echo $PR_NUMBER
+#           echo ::set-output name=docker_tag::$PR_NUMBER
           
       # We checkout all the repos required to build the Dockerfile 
       # They are cloned under $GITHUB_WORKSPACE
@@ -62,16 +90,6 @@ jobs:
           path: repo2          
           ref: ${{steps.tag.outputs.tag}}
         
-      - name: Check workspace
-        run: ls $GITHUB_WORKSPACE
-        
-      - name: Check where we are
-        run: |
-          pwd 
-          ls
-          cd repo1
-          git status
-        
       - name: Publish real to Github Container Registry
         uses: elgohr/Publish-Docker-Github-Action@main
         with:
@@ -83,3 +101,45 @@ jobs:
           workdir: /home/runner/work/repo1/repo1
           tag_names: true # we use tags/release by their git name (main branch pused as latest)
           #tag_semver: true # we remove the prefix "v" from the git tag
+          
+  build-and-push-pr:
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'pull_request'
+    steps:                     
+      - name: Set image tag from PR number
+        id: pr
+        run: |
+          PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
+          echo $PR_NUMBER
+          echo ::set-output name=docker_tag::$PR_NUMBER
+          
+      # We checkout all the repos required to build the Dockerfile 
+      # They are cloned under $GITHUB_WORKSPACE
+      # $GITHUB_WORKSPACE = /home/runner/work/repo1/repo1
+      # repo1 = /home/runner/work/repo1/repo1/repo1
+      # repo2 = /home/runner/work/repo1/repo1/repo2
+      - name: Check out repo1
+        uses: actions/checkout@v2
+        with:
+          path: repo1
+          ref: ${{steps.tag.outputs.tag}}
+
+      - name: Check out repo2
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.CHECKOUT_REPOS }}
+          repository: test-organization-token/repo2
+          path: repo2          
+          ref: ${{steps.tag.outputs.tag}}
+                
+      - name: Publish real to Github Container Registry
+        uses: elgohr/Publish-Docker-Github-Action@main
+        if: github.event_name == 'pull_request'
+        with:
+          name: test-organization-token/test-image
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          dockerfile: repo1/dockerfiles/Dockerfile 
+          workdir: /home/runner/work/repo1/repo1
+          tag: ${{steps.pr.outputs.docker_tag}}
