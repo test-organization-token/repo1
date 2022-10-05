@@ -63,7 +63,7 @@ jobs:
           echo "::set-output name=docker_tag::$docker_tag"
       
       - name: Print docker tag
-        run: echo ${{steps.tag-dev.outputs.docker_tag}}
+        run: echo ${{steps.tag.outputs.docker_tag}}
             
       - name: Publish real to Github Container Registry
         uses: elgohr/Publish-Docker-Github-Action@main
@@ -76,7 +76,7 @@ jobs:
           dockerfile: repo1/dockerfiles/Dockerfile 
           workdir: /home/runner/work/repo1/repo1
           cache: false
-          tags: dev-${{ steps.tag-dev.outputs.docker_tag }}
+          tags: dev-${{ steps.tag.outputs.docker_tag }}
                  
       - name: Publish real to Github Container Registry
         uses: elgohr/Publish-Docker-Github-Action@main
