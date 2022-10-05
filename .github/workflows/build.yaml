@@ -55,6 +55,7 @@ jobs:
           workdir: /home/runner/work/repo1/repo1
           cache: false
           tags: dev
+          snapshot: true
                  
       - name: Publish real to Github Container Registry
         uses: elgohr/Publish-Docker-Github-Action@main
