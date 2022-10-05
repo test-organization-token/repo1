@@ -113,6 +113,11 @@ jobs:
           echo "pr number: $PR_NUMBER"
           echo "branch name: ${{github.head_ref}}"
           echo ::set-output name=docker_tag::$PR_NUMBER
+      
+      - name: Print PR number
+        run: |
+          PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
+          echo "tag: ${{steps.pr.outputs.docker_tag}}"
           
       # We checkout all the repos required to build the Dockerfile 
       # They are cloned under $GITHUB_WORKSPACE
