@@ -1,11 +1,16 @@
-name: Test cross repos
+name: Test building
 
 on:    
    workflow_dispatch:
      inputs:
        tag-repo2:
          type: string
-         description: 'Branch to use for building (main is default)'
+         description: 'Branch for repo2 (default: main)'
+         required: true
+         default: main
+       tag-repo3:
+         type: string
+         description: 'Branch for repo3 (default: main)'
          required: true
          default: main
 
