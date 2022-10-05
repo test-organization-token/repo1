@@ -110,7 +110,8 @@ jobs:
         id: pr
         run: |
           PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
-          echo $PR_NUMBER
+          echo "pr number: $PR_NUMBER"
+          echo "branch name: ${{github.base_ref}}"
           echo ::set-output name=docker_tag::$PR_NUMBER
           
       # We checkout all the repos required to build the Dockerfile 
