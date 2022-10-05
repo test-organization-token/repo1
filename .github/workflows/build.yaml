@@ -7,6 +7,11 @@ on:
          type: string
          description: 'Branch for repo2 (default: main)'
          required: false
+         default: main      
+       tag-repo3:
+         type: string
+         description: 'Branch for repo3 (default: main)'
+         required: false
          default: main
 
    push:
@@ -16,7 +21,8 @@ on:
 jobs:
   build-and-push-dev:    
     runs-on: ubuntu-22.04
-    if: github.event_name == 'workflow_dispatch'
+    #if: github.event_name == 'workflow_dispatch'
+    if: "${{ github.event.inputs.tag-repo2 != '' }} || ${{ github.event.inputs.tag-repo3 != '' }}"
     steps:
           
       # We checkout all the repos required to build the Dockerfile 
