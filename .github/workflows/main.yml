@@ -32,10 +32,12 @@ jobs:
         id: tag
         
       - name: Print tag
+        if: github.event_name == 'push'
         run: echo ${{steps.tag.outputs.tag}}
         
       - name: Get PR number
         id: PR_number
+        if: github.event_name == 'pull_request'
         run: |
           PR_NUMBER=$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')
           echo $PR_NUMBER
