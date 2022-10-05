@@ -21,8 +21,7 @@ on:
 jobs:
   build-and-push-dev:    
     runs-on: ubuntu-22.04
-    #if: github.event_name == 'workflow_dispatch'
-    if: github.event.inputs.tag-repo1 != 'main' || github.event.inputs.tag-repo2 != 'main' 
+    if: github.event_name == 'workflow_dispatch'
     steps:
           
       # We checkout all the repos required to build the Dockerfile 
@@ -46,6 +45,7 @@ jobs:
             
       - name: Publish real to Github Container Registry
         uses: elgohr/Publish-Docker-Github-Action@main
+        if: github.event.inputs.tag-repo1 != 'main' || github.event.inputs.tag-repo2 != 'main' 
         with:
           name: test-organization-token/test-image
           username: ${{ github.actor }}
@@ -54,9 +54,22 @@ jobs:
           dockerfile: repo1/dockerfiles/Dockerfile 
           workdir: /home/runner/work/repo1/repo1
           tags: dev
+                 
+      - name: Publish real to Github Container Registry
+        uses: elgohr/Publish-Docker-Github-Action@main
+        if: github.event.inputs.tag-repo1 == 'main' && github.event.inputs.tag-repo2 == 'main' 
+        with:
+          name: test-organization-token/test-image
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          dockerfile: repo1/dockerfiles/Dockerfile 
+          workdir: /home/runner/work/repo1/repo1
+          tags: latest
           
   build-and-push-tag:
     runs-on: ubuntu-22.04
+    if: github.event_name == 'push'
     steps:
       - name: Get tag
         id: tag
