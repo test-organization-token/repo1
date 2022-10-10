@@ -72,7 +72,7 @@ jobs:
         run: echo ${{github.event_name}} && pwd
         
       - name: Build dev real docker image
-        run: docker build --no-cache --file repo1/dockerfiles/Dockerfile --tag vvasco/test-image:${{steps.tag.outputs.docker_tag}} 
+        run: docker build --no-cache --file repo1/dockerfiles/Dockerfile --tag vvasco/test-image:${{steps.tag.outputs.docker_tag}} .
         
       - name: Push to DockerHub
         run: docker push vvasco/test-image:${{steps.tag.outputs.docker_tag}}  
