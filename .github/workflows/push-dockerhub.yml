@@ -1,0 +1,78 @@
+name: Test building
+
+on:    
+   workflow_dispatch:
+     inputs:
+       tag-repo1:
+         type: string
+         description: 'Branch for repo1 (default: main)'
+         required: false
+         default: main
+       tag-repo2:
+         type: string
+         description: 'Branch for repo2 (default: main)'
+         required: false
+         default: main
+   schedule:
+      - cron: '58 11 * * *'
+   push:
+     tags:
+     - '*'
+
+jobs:
+  build-and-push-dev:    
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+    steps:
+          
+      # We checkout all the repos required to build the Dockerfile 
+      # They are cloned under $GITHUB_WORKSPACE
+      # $GITHUB_WORKSPACE = /home/runner/work/repo1/repo1
+      # repo1 = /home/runner/work/repo1/repo1/repo1
+      # repo2 = /home/runner/work/repo1/repo1/repo2
+      - name: Check out repo1
+        uses: actions/checkout@v2
+        with:
+          path: repo1
+          ref:  ${{ inputs.tag-repo1 }}
+          
+      - name: Check out repo2
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.CHECKOUT_REPOS }}
+          repository: test-organization-token/repo2
+          path: repo2
+          ref:  ${{ inputs.tag-repo2 }}
+          
+       - name: Login to DockerHub Registry
+         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      
+      - name: Check docker tag
+        if: github.event_name == 'workflow_dispatch' && (github.event.inputs.tag-repo1 != 'main' || github.event.inputs.tag-repo2 != 'main') 
+        id: tag
+        run: |
+          docker_tag="latest"
+          if [[ "${{github.event.inputs.tag-repo1}}" != "main" ]]
+          then 
+           docker_tag="${{github.event.inputs.tag-repo1}}"
+           echo "$docker_tag"
+           docker_tag=dev-$(echo "$docker_tag" | tr '/' '_')
+           echo "$docker_tag"
+          elif [[ "${{github.event.inputs.tag-repo2}}" != "main" ]]
+          then
+           docker_tag="${{github.event.inputs.tag-repo2}}"
+           docker_tag=dev-$(echo "$docker_tag" | tr '/' '_')
+          fi
+          echo "::set-output name=docker_tag::$docker_tag"
+      
+      - name: Print docker tag
+        run: echo ${{steps.tag.outputs.docker_tag}}
+       
+      - name: Print event name
+        run: echo ${{github.event_name}}
+        
+      - name: Build dev real docker image
+        run: docker build --no-cache --file repo1/dockerfiles/Dockerfile vvasco/test-image:${{steps.tag.outputs.docker_tag}} 
+        
+      - name: Push to DockerHub
+        run: docker push vvasco/test-image:${{steps.tag.outputs.docker_tag}}  
