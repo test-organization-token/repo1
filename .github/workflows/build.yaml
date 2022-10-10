@@ -14,7 +14,7 @@ on:
          required: false
          default: main
    schedule:
-      - cron: '58 10 * * *'
+      - cron: '58 11 * * *'
    push:
      tags:
      - '*'
@@ -45,7 +45,7 @@ jobs:
           ref:  ${{ inputs.tag-repo2 }}
       
       - name: Check docker tag
-        if: github.event_name == 'workflow_dispatch' && github.event.inputs.tag-repo1 != 'main' || github.event.inputs.tag-repo2 != 'main' 
+        if: github.event_name == 'workflow_dispatch' && (github.event.inputs.tag-repo1 != 'main' || github.event.inputs.tag-repo2 != 'main') 
         id: tag
         run: |
           docker_tag="latest"
@@ -70,7 +70,7 @@ jobs:
             
       - name: Publish dev to Github Container Registry
         uses: elgohr/Publish-Docker-Github-Action@main
-        if: github.event_name == 'workflow_dispatch' && github.event.inputs.tag-repo1 != 'main' || github.event.inputs.tag-repo2 != 'main' 
+        if: github.event_name == 'workflow_dispatch' && (github.event.inputs.tag-repo1 != 'main' || github.event.inputs.tag-repo2 != 'main') 
         with:
           name: test-organization-token/test-image
           username: ${{ github.actor }}
@@ -83,7 +83,7 @@ jobs:
                  
       - name: Publish latest to Github Container Registry
         uses: elgohr/Publish-Docker-Github-Action@main
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' && github.event.inputs.tag-repo1 == 'main' && github.event.inputs.tag-repo2 == 'main' 
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.tag-repo1 == 'main' && github.event.inputs.tag-repo2 == 'main') 
         with:
           name: test-organization-token/test-image
           username: ${{ github.actor }}
