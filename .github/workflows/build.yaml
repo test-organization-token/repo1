@@ -13,8 +13,8 @@ on:
          description: 'Branch for repo2 (default: main)'
          required: false
          default: main
-#    schedule:
-#      - cron: '25 14 * * *'
+   schedule:
+      - cron: '00 10 * * *'
    push:
      tags:
      - '*'
