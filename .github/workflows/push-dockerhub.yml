@@ -44,8 +44,8 @@ jobs:
           path: repo2
           ref:  ${{ inputs.tag-repo2 }}
           
-       - name: Login to DockerHub Registry
-         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      - name: Login to DockerHub Registry
+        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
       
       - name: Check docker tag
         if: github.event_name == 'workflow_dispatch' && (github.event.inputs.tag-repo1 != 'main' || github.event.inputs.tag-repo2 != 'main') 
