@@ -7,7 +7,7 @@ on:
          type: string
          description: 'Branch for repo1 (default: main)'
          required: false
-         default: main      
+         default: main
        tag-repo2:
          type: string
          description: 'Branch for repo2 (default: main)'
@@ -65,7 +65,7 @@ jobs:
       - name: Print docker tag
         run: echo ${{steps.tag.outputs.docker_tag}}
             
-      - name: Publish real to Github Container Registry
+      - name: Publish dev to Github Container Registry
         uses: elgohr/Publish-Docker-Github-Action@main
         if: github.event_name != 'schedule' && github.event.inputs.tag-repo1 != 'main' || github.event.inputs.tag-repo2 != 'main' 
         with:
@@ -78,7 +78,7 @@ jobs:
           cache: false
           tags: dev-${{ steps.tag.outputs.docker_tag }}
                  
-      - name: Publish real to Github Container Registry
+      - name: Publish latest to Github Container Registry
         uses: elgohr/Publish-Docker-Github-Action@main
         if: github.event.inputs.tag-repo1 == 'main' && github.event.inputs.tag-repo2 == 'main' 
         with:
